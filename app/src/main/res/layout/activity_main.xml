@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/startService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:clickable="true"
+        android:onClick="onMyButtonClick"
+        android:text="startService"
+        app:layout_constraintTop_toBottomOf="@+id/CurVal"
+        tools:layout_editor_absoluteX="133dp" />
+
+    <TextView
+        android:id="@+id/CurVal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="CurVal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/ACTION_Start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:onClick="onMyButtonClick"
+        android:text="ACTION_Start"
+        app:layout_constraintEnd_toEndOf="@+id/startService"
+        app:layout_constraintStart_toStartOf="@+id/startService"
+        app:layout_constraintTop_toBottomOf="@+id/startService" />
+
+    <Button
+        android:id="@+id/ACTION_Stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:onClick="onMyButtonClick"
+        android:text="ACTION_Stop"
+        app:layout_constraintEnd_toEndOf="@+id/ACTION_Start"
+        app:layout_constraintStart_toStartOf="@+id/ACTION_Start"
+        app:layout_constraintTop_toBottomOf="@+id/ACTION_Start" />
+
+    <Button
+        android:id="@+id/Get_I"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:onClick="onMyButtonClick"
+        android:text="Get_I"
+        app:layout_constraintEnd_toEndOf="@+id/ACTION_Stop"
+        app:layout_constraintStart_toStartOf="@+id/ACTION_Stop"
+        app:layout_constraintTop_toBottomOf="@+id/ACTION_Stop" />
+</androidx.constraintlayout.widget.ConstraintLayout>
