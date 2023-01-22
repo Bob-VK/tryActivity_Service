@@ -9,7 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.IntentFilter;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -22,8 +26,9 @@ import android.util.Log;
 public class MyIntentService_Count extends IntentService {
     public static final String EXTRA_KEY_OUT ="EXTRA_OUT" ;
     public static final String ACTION_MYINTENTSERVICE = "ru.bob.tryactivity_service.action.RESPONSE";
-    private My_Thread count_Thread;
+
     private Service_Receiver Service_Receiver_E;
+    private String LOG_TAG = "--MyIntentService_Count__";
 
     public static final String ACTION_Start = "ru.bob.tryactivity_service.action.Start";
     public static final String ACTION_Stop = "ru.bob.tryactivity_service.action.Stop";
@@ -65,6 +70,13 @@ public class MyIntentService_Count extends IntentService {
 /*        count_Thread = new My_Thread();
         count_Thread.start();*/
         Log.d("----//--","MyIntentService_Count");
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(LOG_TAG, "MyService onBind");
+        return new Binder();
     }
 
     /**
@@ -132,20 +144,7 @@ public class MyIntentService_Count extends IntentService {
         throw new UnsupportedOperationException("Not yet implemented");
     }
     */
-    private class My_Thread  extends Thread {
-        //        private Handler h_Thread;
-       My_Thread( ) {
-            super();
-        }
-        @Override
-        public void run() {
-            try {
-                Counter();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
     private void Counter() throws InterruptedException {
         String extraOut;
         for ( i = 1; i <= 100;  i=i+CountEnable) {
