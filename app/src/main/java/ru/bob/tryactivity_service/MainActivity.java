@@ -1,51 +1,54 @@
 package ru.bob.tryactivity_service;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements ForCalback{
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.concurrent.TimeUnit;
+
+public class MainActivity extends AppCompatActivity {
     private MyBroadcastReceiver mMyBroadcastReceiver;
     TextView CurVal;
     Intent myIntentService_Count;
     Intent Intent_ACTION_Start;
     Intent Intent_ACTION_Stop;
-    android.content.ComponentName E_ComponentName;
-    ServiceConnection sConn;
-    boolean bound;
+    ServiceTstStateRequest ServiceTst_StateReqwest_E ;
+    int count_Wait_max =3;
+
+/*    ServiceConnection sConn;
+    boolean bound;*/
     public class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             String result = intent
                     .getStringExtra(MyIntentService_Count.EXTRA_KEY_OUT);
             CurVal.setText(result);
-
         }
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mMyBroadcastReceiver);
+        ServiceTst_StateReqwest_E.UnregisterService();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ServiceTst_StateReqwest_E = new ServiceTstStateRequest(this);
         CurVal =findViewById(R.id.CurVal);
         InittService();
-        // подготовка к биндингу
+/*        // подготовка к биндингу
         String LOG_TAG ="-- onServiceConnected--";
         sConn = new ServiceConnection() {
             @Override
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ForCalback{
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
             }
-        };//sConn = new ServiceConnection();
+        };//sConn = new ServiceConnection();*/
         // регистрируем BroadcastReceiver
         mMyBroadcastReceiver = new MyBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(
@@ -71,23 +74,23 @@ public class MainActivity extends AppCompatActivity implements ForCalback{
             case R.id.startService:
                 InittService();
                 startService(myIntentService_Count);
-
                 break;
             case R.id.ACTION_Start:
-
                     sendBroadcast(Intent_ACTION_Start);
                 break;
             case R.id.ACTION_Stop:
-
-                    sendBroadcast(Intent_ACTION_Stop);
+                   sendBroadcast(Intent_ACTION_Stop);
                 break;
-            case R.id.bindService:
+            case R.id.SendRequest:
+                ServiceTst_StateReqwest_E.SendRequest();
+/*
                 boolean cc = bindService(myIntentService_Count, sConn, 0);
                 Log.d("--cc--",String.valueOf(cc));
+*/
                  break;
                 }//switch (view.getId())
 
-    }
+    }//public void onMyButtonClick(View view
     private void InittService(){
          myIntentService_Count = new Intent(this, MyIntentService_Count.class);
 //         Intent_ACTION_Start = new Intent(MyIntentService_Count.ACTION_Start,null, this,MyIntentService_Count.class);
@@ -97,9 +100,24 @@ public class MainActivity extends AppCompatActivity implements ForCalback{
          Intent_ACTION_Start.addCategory(Intent.CATEGORY_DEFAULT);
          Intent_ACTION_Stop.addCategory(Intent.CATEGORY_DEFAULT);
     }
+    private class Whait_Service_signal extends Thread{
 
-    @Override
-    public void Cur_I(int i) {
 
+        @Override
+        public void run() {
+            int count_Wait=0;
+            while (ServiceTst_StateReqwest_E.Service_Count_running && count_Wait < count_Wait_max){
+                count_Wait++;
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (!ServiceTst_StateReqwest_E.Service_Count_running){
+
+                }
+
+            }
+        }
     }
 }

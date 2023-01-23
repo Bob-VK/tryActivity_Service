@@ -30,8 +30,11 @@ public class MyIntentService_Count extends IntentService {
     private Service_Receiver Service_Receiver_E;
     private String LOG_TAG = "--MyIntentService_Count__";
 
+    private Intent StateRunResponse_I = new Intent(ServiceTstStateRequest.StateRunResponse);
+
     public static final String ACTION_Start = "ru.bob.tryactivity_service.action.Start";
     public static final String ACTION_Stop = "ru.bob.tryactivity_service.action.Stop";
+
     public class Service_Receiver extends BroadcastReceiver {
 
         @Override
@@ -46,6 +49,11 @@ public class MyIntentService_Count extends IntentService {
                         break;}
                     case ACTION_Stop: {
                         CountEnable=0;
+                        break;
+                    }
+                    case ServiceTstStateRequest.StateRunRequest: {
+                        StateRunResponse_I.addCategory(Intent.CATEGORY_DEFAULT);
+                        sendBroadcast(StateRunResponse_I);
                         break;
                     }
                 }
@@ -117,6 +125,7 @@ public class MyIntentService_Count extends IntentService {
         IntentFilter intentFilter = new IntentFilter(
                 MyIntentService_Count.ACTION_Start);
         intentFilter.addAction(ACTION_Stop);
+        intentFilter.addAction(ServiceTstStateRequest.StateRunRequest);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(Service_Receiver_E, intentFilter);
         try {
