@@ -4,6 +4,8 @@ import static java.lang.Thread.sleep;
 
 import android.app.IntentService;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -24,8 +28,10 @@ import androidx.annotation.Nullable;
  * helper methods.
  */
 public class MyIntentService_Count extends IntentService {
+
     public static final String EXTRA_KEY_OUT ="EXTRA_OUT" ;
     public static final String ACTION_MYINTENTSERVICE = "ru.bob.tryactivity_service.action.RESPONSE";
+
 
     private Service_Receiver Service_Receiver_E;
     private String LOG_TAG = "--MyIntentService_Count__";
@@ -54,6 +60,11 @@ public class MyIntentService_Count extends IntentService {
                     case ServiceTstStateRequest.StateRunRequest: {
                         StateRunResponse_I.addCategory(Intent.CATEGORY_DEFAULT);
                         sendBroadcast(StateRunResponse_I);
+                        HideNotify ();
+                        break;
+                    }
+                    case ServiceTstStateRequest.ActivityDestroy: {
+                        ShowOngoingNotify();
                         break;
                     }
                 }
@@ -61,7 +72,28 @@ public class MyIntentService_Count extends IntentService {
 //            throw new UnsupportedOperationException("Not yet implemented");
         }
     }
+    NotificationManagerCompat notificationManager;
+    private void ShowOngoingNotify (){
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                0, notificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
 
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, ServiceTstStateRequest.CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_gnome_power)
+                        .setContentTitle("Напоминание")
+                        .setContentText("Пора покормить кота")
+                        .setContentIntent(contentIntent)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                  Notification Notification_E = builder.build();
+        Notification_E.flags =Notification_E.flags | Notification.FLAG_ONGOING_EVENT;
+         notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(ServiceTstStateRequest.NOTIFY_ID,Notification_E );
+    }
+    private void HideNotify (){
+        notificationManager.cancel(ServiceTstStateRequest.NOTIFY_ID);
+    }
     public int i;
     public int CountEnable = 0;
 
@@ -121,11 +153,13 @@ public class MyIntentService_Count extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
         Service_Receiver_E = new Service_Receiver();
         IntentFilter intentFilter = new IntentFilter(
                 MyIntentService_Count.ACTION_Start);
         intentFilter.addAction(ACTION_Stop);
         intentFilter.addAction(ServiceTstStateRequest.StateRunRequest);
+        intentFilter.addAction(ServiceTstStateRequest.ActivityDestroy);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(Service_Receiver_E, intentFilter);
         try {
@@ -167,7 +201,7 @@ public class MyIntentService_Count extends IntentService {
             responseIntent.putExtra(EXTRA_KEY_OUT, extraOut);
             sendBroadcast(responseIntent);
             try {
-                sleep(500);
+                sleep(ServiceTstStateRequest.pause_send);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

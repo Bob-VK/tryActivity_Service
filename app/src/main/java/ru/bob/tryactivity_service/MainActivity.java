@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(mMyBroadcastReceiver);
         ServiceTst_StateReqwest_E.UnregisterService();
+        sendBroadcast(ServiceTst_StateReqwest_E.ActivityDestroy_I);
     }
 
     @Override
@@ -71,23 +72,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void onMyButtonClick(View view){
         switch (view.getId()){
-            case R.id.startService:
+            case R.id.startService:{
                 InittService();
                 startService(myIntentService_Count);
-                break;
-            case R.id.ACTION_Start:
+                break;}
+            case R.id.ACTION_Start:{
                     sendBroadcast(Intent_ACTION_Start);
-                break;
-            case R.id.ACTION_Stop:
+                break;}
+            case R.id.ACTION_Stop:{
                    sendBroadcast(Intent_ACTION_Stop);
-                break;
-            case R.id.SendRequest:
+                break;}
+            case R.id.SendRequest:{
                 ServiceTst_StateReqwest_E.SendRequest();
 /*
                 boolean cc = bindService(myIntentService_Count, sConn, 0);
                 Log.d("--cc--",String.valueOf(cc));
 */
-                 break;
+                 break;}
+            case R.id.I_destroy:{
+                sendBroadcast(ServiceTst_StateReqwest_E.ActivityDestroy_I);
+                break;}
                 }//switch (view.getId())
 
     }//public void onMyButtonClick(View view

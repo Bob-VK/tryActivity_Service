@@ -1,5 +1,6 @@
 package ru.bob.tryactivity_service;
 
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,19 @@ import androidx.appcompat.app.AppCompatActivity;
 public  class ServiceTstStateRequest {
     public static final String StateRunRequest = "ru.bob.tryactivity_service.action.StateRunRequest";
     public static final String StateRunResponse = "ru.bob.tryactivity_service.action.StateRunResponse";
+//    public static final String ActivityStarted = "ru.bob.tryactivity_service.action.ActivityStarted";
+    public static final String ActivityDestroy = "ru.bob.tryactivity_service.action.ActivityDestroy";
+    public Intent ActivityDestroy_I = new Intent(ActivityDestroy).addCategory(Intent.CATEGORY_DEFAULT);
+
+
+    public static final int pause_send = 500;// частота свежих данных
+    boolean IntentService_started = false;
+    // Идентификатор уведомления
+    public static final int NOTIFY_ID = 101;
+
+    // Идентификатор канала
+    public static String CHANNEL_ID = "Cat channel";
+
     private AppCompatActivity AppCompatActivity_E;
     BroadcastReceiver_ServiceTst BroadcastReceiver_ServiceTst_E = new BroadcastReceiver_ServiceTst();
     public ServiceTstStateRequest(AppCompatActivity AppCompatActivity_p) {
