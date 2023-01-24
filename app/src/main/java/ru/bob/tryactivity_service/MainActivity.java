@@ -10,26 +10,34 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.concurrent.TimeUnit;
-
 public class MainActivity extends AppCompatActivity {
     private MyBroadcastReceiver mMyBroadcastReceiver;
     TextView CurVal;
-    Intent myIntentService_Count;
+
     Intent Intent_ACTION_Start;
     Intent Intent_ACTION_Stop;
     ServiceTstStateRequest ServiceTst_StateReqwest_E ;
-    int count_Wait_max =3;
+
 
 /*    ServiceConnection sConn;
     boolean bound;*/
     public class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                ServiceTst_StateReqwest_E.Service_Not_running = false;//если хоть что-то пришло
 
-            String result = intent
-                    .getStringExtra(MyIntentService_Count.EXTRA_KEY_OUT);
-            CurVal.setText(result);
+                final String action = intent.getAction();
+                switch(action){
+                    case MyIntentService_Count.ACTION_MYINTENTSERVICE: {
+                        String result = intent
+                                .getStringExtra(MyIntentService_Count.EXTRA_KEY_OUT);
+                        CurVal.setText(result);
+                        break;
+                    }
+                }
+            }//if (intent != null)
+
         }
     }
 
@@ -38,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mMyBroadcastReceiver);
-        ServiceTst_StateReqwest_E.UnregisterService();
+//!!!!!reqv        ServiceTst_StateReqwest_E.UnregisterService();
         sendBroadcast(ServiceTst_StateReqwest_E.ActivityDestroy_I);
     }
 
@@ -66,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         mMyBroadcastReceiver = new MyBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(
                 MyIntentService_Count.ACTION_MYINTENTSERVICE);
+        intentFilter.addAction(ServiceTstStateRequest.StateRunResponse);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mMyBroadcastReceiver, intentFilter);
     }//protected void onCreate(Bundle savedInstanceState)
@@ -74,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()){
             case R.id.startService:{
                 InittService();
-                startService(myIntentService_Count);
+                ServiceTst_StateReqwest_E.Start_Service();
                 break;}
             case R.id.ACTION_Start:{
                     sendBroadcast(Intent_ACTION_Start);
@@ -96,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     }//public void onMyButtonClick(View view
     private void InittService(){
-         myIntentService_Count = new Intent(this, MyIntentService_Count.class);
+
 //         Intent_ACTION_Start = new Intent(MyIntentService_Count.ACTION_Start,null, this,MyIntentService_Count.class);
          Intent_ACTION_Start = new Intent(MyIntentService_Count.ACTION_Start);
 //         Intent_ACTION_Stop = new Intent(MyIntentService_Count.ACTION_Stop,null, this,MyIntentService_Count.class);
@@ -104,24 +113,5 @@ public class MainActivity extends AppCompatActivity {
          Intent_ACTION_Start.addCategory(Intent.CATEGORY_DEFAULT);
          Intent_ACTION_Stop.addCategory(Intent.CATEGORY_DEFAULT);
     }
-    private class Whait_Service_signal extends Thread{
 
-
-        @Override
-        public void run() {
-            int count_Wait=0;
-            while (ServiceTst_StateReqwest_E.Service_Count_running && count_Wait < count_Wait_max){
-                count_Wait++;
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (!ServiceTst_StateReqwest_E.Service_Count_running){
-
-                }
-
-            }
-        }
-    }
 }

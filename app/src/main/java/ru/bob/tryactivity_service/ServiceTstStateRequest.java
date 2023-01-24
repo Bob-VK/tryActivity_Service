@@ -1,6 +1,5 @@
 package ru.bob.tryactivity_service;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +16,9 @@ public  class ServiceTstStateRequest {
 
 
     public static final int pause_send = 500;// частота свежих данных
-    boolean IntentService_started = false;
+    private int count_Wait_max = 10;
+    //!!!reqvest boolean IntentService_started = false;
+
     // Идентификатор уведомления
     public static final int NOTIFY_ID = 101;
 
@@ -25,13 +26,15 @@ public  class ServiceTstStateRequest {
     public static String CHANNEL_ID = "Cat channel";
 
     private AppCompatActivity AppCompatActivity_E;
-    BroadcastReceiver_ServiceTst BroadcastReceiver_ServiceTst_E = new BroadcastReceiver_ServiceTst();
-    public ServiceTstStateRequest(AppCompatActivity AppCompatActivity_p) {
+//!!!reqvest    BroadcastReceiver_ServiceTst BroadcastReceiver_ServiceTst_E ;
+    public ServiceTstStateRequest(MainActivity AppCompatActivity_p) {
         AppCompatActivity_E=AppCompatActivity_p;
-        IntentFilter intentFilter = new IntentFilter(
+/*!!!reqvest
+      IntentFilter intentFilter = new IntentFilter(
                 StateRunResponse);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        AppCompatActivity_p.registerReceiver(BroadcastReceiver_ServiceTst_E, intentFilter);
+        BroadcastReceiver_ServiceTst_E= new BroadcastReceiver_ServiceTst();
+        AppCompatActivity_p.registerReceiver(BroadcastReceiver_ServiceTst_E, intentFilter);*/
         SendRequest();
     }
     public void SendRequest(){
@@ -40,16 +43,43 @@ public  class ServiceTstStateRequest {
         AppCompatActivity_E.sendBroadcast(StateRunRequest_I);
     }
 
-    public boolean Service_Count_running = false;
-    public class BroadcastReceiver_ServiceTst extends BroadcastReceiver {
-
+    public boolean Service_Not_running = true;
+   /*!!!!!reqvest
+        public class BroadcastReceiver_ServiceTst extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Service_Count_running =true;//теперь знаем, что сервис запущен
+            Service_Not_running =false;//теперь знаем, что сервис запущен
         }
+    }*/
+    public Whait_Service_signal Whait_Service_signal_E ;
+    public void Start_Service(){
+        SendRequest();
+        Whait_Service_signal_E = new Whait_Service_signal();
+        Whait_Service_signal_E.start();
+
     }
+    public class Whait_Service_signal extends Thread{
+        @Override
+        public void run() {
+            int count_Wait=0;
+            int timeout_sleep =pause_send / count_Wait_max ; // ;ждем в итоге pause_send
+            while (Service_Not_running && count_Wait < count_Wait_max){
+                count_Wait++;
+                try {
+                    sleep(timeout_sleep);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }//while (Service_Not_running && count_Wait < count_Wait_max)
+            if (Service_Not_running){
+                Intent myIntentService_Count = new Intent(AppCompatActivity_E, MyIntentService_Count.class);
+                AppCompatActivity_E.startService(myIntentService_Count);
+            }
+        }//public void run()
+    }//private class Whait_Service_signal
+/*!!!!!reqv
     public void UnregisterService(){
         AppCompatActivity_E.unregisterReceiver(BroadcastReceiver_ServiceTst_E);
-    }
+    }*/
 }
 
