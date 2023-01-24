@@ -61,16 +61,11 @@ public  class ServiceTstStateRequest {
     public class Whait_Service_signal extends Thread{
         @Override
         public void run() {
-            int count_Wait=0;
-            int timeout_sleep =pause_send / count_Wait_max ; // ;ждем в итоге pause_send
-            while (Service_Not_running && count_Wait < count_Wait_max){
-                count_Wait++;
-                try {
-                    sleep(timeout_sleep);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }//while (Service_Not_running && count_Wait < count_Wait_max)
+            try {
+                sleep(pause_send);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (Service_Not_running){
                 Intent myIntentService_Count = new Intent(AppCompatActivity_E, MyIntentService_Count.class);
                 AppCompatActivity_E.startService(myIntentService_Count);
