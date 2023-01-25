@@ -88,7 +88,7 @@ public class MyIntentService_Count extends IntentService {
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
                   Notification Notification_E = builder.build();
         Notification_E.flags =Notification_E.flags | Notification.FLAG_ONGOING_EVENT;
-         notificationManager = NotificationManagerCompat.from(this);
+
         notificationManager.notify(ServiceTstStateRequest.NOTIFY_ID,Notification_E );
     }
     private void HideNotify (){
@@ -153,8 +153,8 @@ public class MyIntentService_Count extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
         Service_Receiver_E = new Service_Receiver();
+        notificationManager = NotificationManagerCompat.from(this);
         IntentFilter intentFilter = new IntentFilter(
                 MyIntentService_Count.ACTION_Start);
         intentFilter.addAction(ACTION_Stop);
